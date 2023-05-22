@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère Cipher Generator</title>
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #333;
+      padding: 20px;
+      padding-right: 30px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 5px;
+      margin-bottom: 10px;
+      resize: none;
+      background-color: #444;
+      color: #fff;
+    }
+
+    .key-input {
+      display: flex;
+    }
+
+    .key-input textarea {
+      flex: 1;
+    }
+
+    .key-input button {
+      margin-left: 10px;
+    }
+
+    button {
+      display: block;
+      margin: 10px 0;
+      padding: 8px 12px;
+      background-color: #008000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004d00;
+    }
+
+    textarea[readonly] {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vigenère Cipher Generator</h1>
+
+    <label for="plaintext">Enter plaintext:</label>
+    <textarea id="plaintext" placeholder="Enter the plaintext..."></textarea>
+
+    <label for="key">Enter key:</label>
+    <div class="key-input">
+      <textarea id="key" placeholder="Enter the key manually..."></textarea>
+      <button id="generateKeyButton">Generate Random Key</button>
+    </div>
+
+    <button id="encryptButton">Encrypt</button>
+    <button id="decryptButton">Decrypt</button>
+
+    <label for="ciphertext">Ciphertext:</label>
+    <textarea id="ciphertext" placeholder="Enter the ciphertext..."></textarea>
+
+    <label for="decryptedText">Decrypted Text:</label>
+    <textarea id="decryptedText" readonly></textarea>
+  </div>
+
+  <script>
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    function vigenereEncrypt(plaintext, key) {
+      const plaintextUpper = plaintext.toUpperCase();
+      const keyUpper = key.toUpperCase();
+      let ciphertext = "";
+
+      for (let i = 0; i < plaintext.length; i++) {
+        const plaintextChar = plaintextUpper.charAt(i);
+        const keyChar = keyUpper.charAt(i % key.length);
+
+        if (plaintextChar === " ") {
+          ciphertext += " ";
+        } else {
+          const plaintextIndex = alphabet.indexOf(plaintextChar);
+          const keyIndex = alphabet.indexOf(keyChar);
+          const encryptedIndex = (plaintextIndex + keyIndex) % 26;
+          ciphertext += alphabet.charAt(encryptedIndex);
+        }
+      }
+
+      return ciphertext;
+    }
+
+    function vigenereDecrypt(ciphertext, key) {
+      const ciphertextUpper = ciphertext.toUpperCase();
+      const keyUpper = key.toUpperCase();
+      let plaintext = "";
+
+      for (let i = 0; i < ciphertext.length; i++) {
+        const ciphertextChar = ciphertextUpper.charAt(i);
+        const keyChar = keyUpper.charAt(i % key.length);
+
+        if (ciphertextChar === " ") {
+          plaintext += " ";
+        } else {
+          const ciphertextIndex = alphabet.indexOf(ciphertextChar);
+          const keyIndex = alphabet.indexOf(keyChar);
+          const decryptedIndex = (ciphertextIndex - keyIndex + 26) % 26;
+          plaintext += alphabet.charAt(decryptedIndex);
+        }
+      }
+
+      return plaintext;
+    }
+
+    const encryptButton = document.getElementById("encryptButton");
+    const decryptButton = document.getElementById("decryptButton");
+    const plaintextTextArea = document.getElementById("plaintext");
+    const keyTextArea = document.getElementById("key");
+    const ciphertextTextArea = document.getElementById("ciphertext");
+    const decryptedTextArea = document.getElementById("decryptedText");
+
+    encryptButton.addEventListener("click", function() {
+      const plaintext = plaintextTextArea.value;
+      const key = keyTextArea.value;
+      const ciphertext = vigenereEncrypt(plaintext, key);
+      ciphertextTextArea.value = ciphertext;
+    });
+
+    decryptButton.addEventListener("click", function() {
+      const ciphertext = ciphertextTextArea.value;
+      const key = keyTextArea.value;
+      const plaintext = vigenereDecrypt(ciphertext, key);
+      decryptedTextArea.value = plaintext;
+    });
+    function generateRandomKey() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const maxLength = 20;
+    let key = '';
+
+    for (let i = 0; i < maxLength; i++) {
+      const randomIndex = Math.floor(Math.random() * letters.length);
+      key += letters[randomIndex];
+    }
+
+    document.getElementById('key').value = key;
+  }
+
+    document.getElementById('generateKeyButton').addEventListener('click', generateRandomKey);
+  
+  </script>
+</body>
+</html>
